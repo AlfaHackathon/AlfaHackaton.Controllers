@@ -5,7 +5,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <PackageId>AlfaHackaton.Controllers</PackageId>
-        <Version>1.3.0</Version>
+        <Version>1.4.0</Version>
         <Authors>artokit</Authors>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <RepositoryUrl>https://github.com/AlfaHackaton/AlfaHackaton.Controllers</RepositoryUrl>
