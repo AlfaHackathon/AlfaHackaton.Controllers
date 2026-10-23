@@ -8,7 +8,12 @@ public abstract class BaseController : ControllerBase
 {
     protected IActionResult Problem<T>(Result.Result<T> result)
     {
-        var statusCode = result.Error.Type switch
+        if (result.Error is not { } error)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        var statusCode = error.HttpStatusCode is { } explicitStatus ? (int)explicitStatus : error.Type switch
         {
             ErrorType.NoRights => StatusCodes.Status403Forbidden,
             ErrorType.NotFound => StatusCodes.Status404NotFound,
@@ -21,12 +26,7 @@ public abstract class BaseController : ControllerBase
             return new ObjectResult(result.Content) { StatusCode = statusCode };
         }
 
-        if (result.Error is null)
-        {
-            return StatusCode(statusCode);
-        }
-
-        return new ObjectResult(new { ErrorMessage = result.Error.Title }) { StatusCode = statusCode };
+        return new ObjectResult(new { ErrorMessage = error.Title }) { StatusCode = statusCode };
     }
 
     protected IActionResult OkOrProblem<T>(Result.Result<T> result)
