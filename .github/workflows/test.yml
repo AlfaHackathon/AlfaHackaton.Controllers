@@ -1,0 +1,33 @@
+name: Controller contract tests
+
+on:
+  push:
+    branches-ignore: [master]
+  pull_request:
+  workflow_call:
+    secrets:
+      GH_TOKEN:
+        required: true
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - name: Configure organization package feed
+        env:
+          PACKAGE_READ_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          dotnet nuget add source "https://nuget.pkg.github.com/AlfaHackathon/index.json" \
+            --name github \
+            --username "${{ github.repository_owner }}" \
+            --password "$PACKAGE_READ_TOKEN" \
+            --store-password-in-clear-text
+      - run: dotnet test Tests/AlfaHackaton.Controllers.Tests.csproj -c Release
